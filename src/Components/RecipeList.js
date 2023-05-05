@@ -7,13 +7,13 @@ const RecipeList = (props) => {
   const [searchTearm, setSearchTearm] = useState("");
   const [query, setQuery] = useState("pizza");
   const [data, setData] = useState("");
-  const [disUrl, setDisUrl] = useState("")
 
 
   const searchrecipe=(searchQuery)=>{
     fetchData(searchQuery).then((response) => {
         setData(response);
         props.setLoader(false);
+        console.log(response);
   });
 }
 
@@ -25,9 +25,19 @@ const discription = (URL)=>{
     fetchData(query).then((response) => {
       setData(response);
       props.setLoader(false);
-      console.log(response);
     });
   }, []);
+  const handleSubmit = e => {
+    searchrecipe(searchTearm);
+    props.setLoader(true);
+  }
+
+  const handleKeypress = e => {
+    //it triggers by pressing the enter key
+  if (e.keyCode === 13) {
+    handleSubmit();
+  }
+  };
 
   return (
     <div className="container">
@@ -39,14 +49,15 @@ const discription = (URL)=>{
             value={searchTearm}
             type="text"
             placeholder="Search your recipe"
+            onKeyDown={handleKeypress}
           />
-          <button onClick={()=> (searchrecipe(searchTearm),props.setLoader(true))} >
+          <button onClick={handleSubmit} type="submit">
             <BsSearch />
           </button>
         </div>
       </div>
       <div className="flexbox">
-        {data &&
+        {data && data.count !=0 ?
           data.hits.map((item, index) => (
             <div onClick={()=> discription(item.recipe.url)} key={index} className="flexItem" >
               <div className="img-wrapper">
@@ -54,7 +65,9 @@ const discription = (URL)=>{
               </div>
               <p>{item.recipe.label}</p>
             </div>
-          ))}
+          ))
+          :<p className="error">Something went wrong...</p>
+        }
       </div>
     </div>
   );
