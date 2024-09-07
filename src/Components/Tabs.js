@@ -4,7 +4,7 @@ import { GiNoodles } from "react-icons/gi";
 import { GiFruitBowl, GiCheckMark } from "react-icons/gi";
 import { MdOutlineIcecream } from "react-icons/md";
 import { useState, useEffect } from "react";
-import { fetchTabData } from "../service";
+import { fetchData, fetchTabData } from "../service";
 
 const Tabs = (props) => {
   const [active, setActive] = useState("Pizza");
@@ -42,12 +42,12 @@ const Tabs = (props) => {
 
   const handelClick = (name, id) => {
     setActive(name);
-    fetchTabData(id).then((response) => {
-      setTabData(response);
+    fetchData(name).then((response) => {
+      setTabData(response.hits[idx]);
       props.setLoader(false);
     });
   };
-
+  const idx = Math.floor((Math.random() * 20) + 1);
   return (
     <div className="container">
       <h1 className="recipeHeading">What would you like to have!</h1>
@@ -69,6 +69,7 @@ const Tabs = (props) => {
             <div className="left-col">
               <span className="badge">
                 {tabData.recipe.cuisineType[0].toUpperCase()}
+                {console.log(tabData.recipe)}
               </span>
               <h1>{tabData.recipe.label}</h1>
               <p>
